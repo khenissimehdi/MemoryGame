@@ -10,16 +10,19 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Blue
 import androidx.compose.ui.graphics.Color.Companion.DarkGray
 import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.graphics.Color.Companion.Red
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
@@ -74,16 +77,16 @@ fun CountryFlagsGrid() {
     var countriesCodes = countries.map { e -> e.code };
 
     LazyVerticalGrid(
-        cells = GridCells.Adaptive(minSize = 128.dp)
-
+        cells = GridCells.Fixed(3),
+        contentPadding = PaddingValues(20.dp)
 
     ) {
         items(countries.size) { i ->
-            Box(modifier = Modifier.padding(10.dp)) {
+            Card( modifier = Modifier.padding(4.dp),
+                backgroundColor = Color.LightGray) {
                 countries[i].getFlag(LocalContext.current)
                     ?.let { Image(bitmap = it.asImageBitmap(), contentDescription = "image") }
             }
-
         }
     }
 }
@@ -105,7 +108,7 @@ fun Splash() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Gray)
+                .background(White)
                 .weight(1f)
                 .padding(8.dp),
             contentAlignment = Alignment.TopCenter
@@ -117,7 +120,7 @@ fun Splash() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Gray)
+                .background(White)
                 .weight(1f)
                 .padding(8.dp),
             contentAlignment = Alignment.Center
