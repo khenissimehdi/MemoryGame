@@ -56,15 +56,18 @@ fun Greeting(name: String) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CountryNamesGrid(countries: List<Country>) {
+
     LazyVerticalGrid(
         cells = GridCells.Adaptive(100.dp),
         contentPadding = PaddingValues(8.dp)
     ) {
         items(countries.size) { i ->
-            FlipCardCountryNames(countries[i].name)
+            FlipCardCountryNames(countries[(0..countries.size).shuffled().first()].name)
         }
     }
 }
+
+
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -105,7 +108,7 @@ fun Splash(countries: List<Country>) {
             contentAlignment = Alignment.TopCenter
         ) {
             Column() {
-                CountryFlagsGrid(countries)
+                CountryFlagsGrid(countries.shuffled())
             }
         }
         Box(
@@ -117,7 +120,7 @@ fun Splash(countries: List<Country>) {
             contentAlignment = Alignment.TopCenter
         ){
             Column {
-                CountryNamesGrid(countries)
+                CountryNamesGrid(countries.shuffled())
             }
         }
     }
