@@ -1,6 +1,7 @@
 package com.example.countrymemory
 
 
+import SetupGraph
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -26,32 +27,67 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.countrymemory.core.Country
 import com.example.countrymemory.core.JavaUtils
 import com.example.countrymemory.ui.theme.CountryMemoryTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        lateinit var navController: NavHostController
         super.onCreate(savedInstanceState)
         setContent {
             CountryMemoryTheme {
-                var countries = JavaUtils.pickRandom(Country.loadCountries(context = LocalContext.current),6);
-                // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    Splash(countries)
-                }
-
+                var fullCountries = Country.loadCountries(context = LocalContext.current)
+                var countries = JavaUtils.pickRandom(fullCountries,6);
+                navController = rememberNavController()
+                SetupGraph(navController = navController,countries = fullCountries, fullCountriesNumber = fullCountries.size)
             }
         }
     }
 }
 
 @Composable
-fun Greeting(name: String) {
-    var countries = Country.loadCountries(context = LocalContext.current)
-    println(countries)
+fun Game(nav: NavHostController, countries: List<Country>) {
+    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
+        Splash(countries)
+    }
 }
 
+@Composable
+fun Home(navController: NavHostController, fullCountriesNumber: Int, countries: List<Country>) {
+    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
+        Text(text = "HOME_SCREEN")
+        var sliderPosition by remember { mutableStateOf(0f) }
+
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(10.dp),horizontalAlignment = Alignment.CenterHorizontally) {
+            Row() {
+                Text(text = sliderPosition.toInt().toString())
+            }
+            Row() {
+                Slider(value = sliderPosition,enabled = true,steps = fullCountriesNumber/3,valueRange = 1f..fullCountriesNumber.toFloat() ,onValueChange = { sliderPosition = it })
+            }
+
+            Row() {
+                Button(
+                    onClick = { navController.navigate(route = "game/$1") },
+                    colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent),
+                    elevation = ButtonDefaults.elevation(
+                        defaultElevation = 0.dp,
+                        pressedElevation = 0.dp,
+                        disabledElevation = 0.dp
+                    )){
+                    Text(text = "Click me")
+                }
+            }
+
+        }
+
+    }
+}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -86,14 +122,6 @@ fun CountryFlagsGrid(countries: List<Country>) {
 }
 
 
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    CountryMemoryTheme {
-        Greeting("Android")
-    }
-}
 
 @Composable
 fun Splash(countries: List<Country>) {
@@ -162,7 +190,9 @@ fun FlipCardCountryNames(name : String) {
                 .graphicsLayer {
                     rotationY = rotation
                     cameraDistance = 8 * density
-                }.padding(4.dp).height(50.dp)
+                }
+                .padding(4.dp)
+                .height(50.dp)
                 .clickable {
                     rotated = !rotated
                 },
@@ -222,7 +252,9 @@ fun FlipCardCountryFlags(flag : ImageBitmap) {
                 .graphicsLayer {
                     rotationY = rotation
                     cameraDistance = 8 * density
-                }.padding(4.dp).height(50.dp)
+                }
+                .padding(4.dp)
+                .height(50.dp)
                 .clickable {
                     rotated = !rotated
                 },
