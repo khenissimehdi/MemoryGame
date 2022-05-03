@@ -2,19 +2,24 @@ package com.example.countrymemory.core;
 
 import android.annotation.SuppressLint;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class JavaUtils {
     @SuppressLint("NewApi")
     public static <E> List<E> pickRandom(List<E> list, int n) {
-        List<E>  c =  new Random().ints(n, 0, list.size()).mapToObj(list::get).collect(Collectors.toList());
-        while (c.stream().distinct().count() < n) {
-            c = new Random().ints(n, 0, list.size()).mapToObj(list::get).collect(Collectors.toList());
+        if (n > list.size()) {
+            throw new IllegalArgumentException("not enough elements");
         }
-        return c;
-
+        Random random = new Random();
+        return IntStream
+                .generate(() -> random.nextInt(list.size()))
+                .distinct()
+                .limit(n)
+                .mapToObj(list::get)
+                .collect(Collectors.toList());
     }
-
 }

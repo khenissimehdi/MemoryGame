@@ -62,7 +62,7 @@ fun CountryNamesGrid(countries: List<Country>) {
         contentPadding = PaddingValues(8.dp)
     ) {
         items(countries.size) { i ->
-            FlipCardCountryNames(countries[(0..countries.size).shuffled().first()].name)
+            FlipCardCountryNames(countries[i].name)
         }
     }
 }
