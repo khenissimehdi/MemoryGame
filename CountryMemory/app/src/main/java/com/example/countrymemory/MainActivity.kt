@@ -19,20 +19,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Blue
-import androidx.compose.ui.graphics.Color.Companion.DarkGray
-import androidx.compose.ui.graphics.Color.Companion.Gray
-import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.countrymemory.core.Country
+import com.example.countrymemory.core.JavaUtils
 import com.example.countrymemory.ui.theme.CountryMemoryTheme
 
 class MainActivity : ComponentActivity() {
@@ -40,9 +35,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             CountryMemoryTheme {
+                var countries = JavaUtils.pickRandom(Country.loadCountries(context = LocalContext.current),6);
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    Splash()
+                    Splash(countries)
                 }
 
             }
@@ -59,17 +55,13 @@ fun Greeting(name: String) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CountryNamesGrid() {
-    var countries = Country.loadCountries(context = LocalContext.current).take(6)
-    var countriesNames = countries.map { e -> e.name };
-
+fun CountryNamesGrid(countries: List<Country>) {
     LazyVerticalGrid(
         cells = GridCells.Adaptive(100.dp),
         contentPadding = PaddingValues(8.dp)
     ) {
-        items(countriesNames.size) { i ->
-            //Text(text = countriesNames[i], fontSize = 20.sp)
-            FlipCardCountryNames(countriesNames[i])
+        items(countries.size) { i ->
+            FlipCardCountryNames(countries[i].name)
         }
     }
 }
@@ -77,10 +69,7 @@ fun CountryNamesGrid() {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CountryFlagsGrid() {
-    var countries = Country.loadCountries(context = LocalContext.current).take(6);
-    var countriesCodes = countries.map { e -> e.code };
-
+fun CountryFlagsGrid(countries: List<Country>) {
     LazyVerticalGrid(
         cells = GridCells.Adaptive(100.dp),
         contentPadding = PaddingValues(8.dp)
@@ -104,7 +93,7 @@ fun DefaultPreview() {
 }
 
 @Composable
-fun Splash() {
+fun Splash(countries: List<Country>) {
 
     Row(modifier =Modifier.fillMaxSize()) {
         Box(
@@ -116,7 +105,7 @@ fun Splash() {
             contentAlignment = Alignment.TopCenter
         ) {
             Column() {
-                CountryFlagsGrid()
+                CountryFlagsGrid(countries)
             }
         }
         Box(
@@ -128,7 +117,7 @@ fun Splash() {
             contentAlignment = Alignment.TopCenter
         ){
             Column {
-                CountryNamesGrid()
+                CountryNamesGrid(countries)
             }
         }
     }
