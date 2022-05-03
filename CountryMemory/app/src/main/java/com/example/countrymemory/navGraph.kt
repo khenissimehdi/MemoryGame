@@ -26,9 +26,12 @@ fun SetupGraph(
             Home(navController = navController,fullCountriesNumber = fullCountriesNumber, countries = countries)
         }
         composable(
-            route = Screen.Game.route
+            route = Screen.Game.route,
+            arguments = listOf(navArgument("number") {
+                type = NavType.IntType
+            })
         ) {
-            Game(nav = navController, countries =  countries)
+            Game(navController = navController, countries =  countries, pickedNumber=it.arguments?.getInt("number") ?: 1)
         }
     }
 

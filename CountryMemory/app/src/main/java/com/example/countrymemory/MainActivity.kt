@@ -25,8 +25,11 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.countrymemory.core.Country
@@ -40,7 +43,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             CountryMemoryTheme {
                 var fullCountries = Country.loadCountries(context = LocalContext.current)
-                var countries = JavaUtils.pickRandom(fullCountries,6);
                 navController = rememberNavController()
                 SetupGraph(navController = navController,countries = fullCountries, fullCountriesNumber = fullCountries.size)
             }
@@ -49,23 +51,27 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Game(nav: NavHostController, countries: List<Country>) {
+fun Game(navController: NavHostController, countries: List<Country>, pickedNumber: Int) {
+    var RandomCountries = JavaUtils.pickRandom(countries,pickedNumber);
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-        Splash(countries)
+        Splash(RandomCountries)
     }
 }
 
 @Composable
 fun Home(navController: NavHostController, fullCountriesNumber: Int, countries: List<Country>) {
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-        Text(text = "HOME_SCREEN")
-        var sliderPosition by remember { mutableStateOf(0f) }
+
+        var sliderPosition by remember { mutableStateOf(1f) }
 
         Column(modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp),horizontalAlignment = Alignment.CenterHorizontally) {
+            .padding(10.dp),horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceEvenly) {
             Row() {
-                Text(text = sliderPosition.toInt().toString())
+                Text(text = "Muscle Your Memory", fontSize = 40.sp ,fontFamily = FontFamily.Cursive,fontWeight = FontWeight.Bold)
+            }
+            Row() {
+                Text(text = sliderPosition.toInt().toString(), fontSize = 30.sp)
             }
             Row() {
                 Slider(value = sliderPosition,enabled = true,steps = fullCountriesNumber/3,valueRange = 1f..fullCountriesNumber.toFloat() ,onValueChange = { sliderPosition = it })
@@ -73,14 +79,10 @@ fun Home(navController: NavHostController, fullCountriesNumber: Int, countries: 
 
             Row() {
                 Button(
-                    onClick = { navController.navigate(route = "game/$1") },
-                    colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent),
-                    elevation = ButtonDefaults.elevation(
-                        defaultElevation = 0.dp,
-                        pressedElevation = 0.dp,
-                        disabledElevation = 0.dp
-                    )){
-                    Text(text = "Click me")
+                    onClick = { navController.navigate(route = "game/${sliderPosition.toInt()}") },
+                    colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color.DarkGray),
+                    ){
+                    Text(text = "Play",color = White, fontSize = 50.sp)
                 }
             }
 
